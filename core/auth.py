@@ -32,7 +32,7 @@ async def autenticar(email: EmailStr, senha: str, db: AsyncSession) -> Optional[
         if not paciente:
             return None
 
-        if not verificar_senha((senha, paciente.senha):
+        if not verificar_senha(senha, paciente.senha):
             return None
 
         return paciente
