@@ -1,11 +1,13 @@
 from typing import List, Optional, Any
 
+import sqlalchemy.exc
 from fastapi import APIRouter, status, Depends, HTTPException, Response
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.responses import JSONResponse
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
+from sqlalchemy.exc import IntegrityError
 
 from models.paciente_model import PacienteModel
 from schemas.paciente_schema import PacienteSchemaBase, PacienteSchemaCreate, PacienteSchemaUpdate
@@ -28,19 +30,23 @@ async def post_paciente(paciente: PacienteSchemaCreate, db: AsyncSession = Depen
                                                  idade=paciente.idade, sexo=paciente.sexo, email=paciente.email,
                                                  senha=gerar_hash_senha(paciente.senha))
     async with db as session:
-        session.add(novo_paciente)
-        await session.commit()
+        try:
+            session.add(novo_paciente)
+            await session.commit()
 
-        return novo_paciente
+            return novo_paciente
+        except IntegrityError:
+            raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE, detail='Já existe um usuário com esse e-mail cadastrado')
 
 
-# GET Usuarios
+# GET Pacientes
+
 @router.get('/', response_model=List[PacienteSchemaBase])
-async def get_usuarios(db: AsyncSession = Depends(get_session)):
+async def get_pacientes(db: AsyncSession = Depends(get_session)):
     async with db as session:
         query = select(PacienteModel)
         result = await session.execute(query)
-        pacientes: List[PacienteSchemaBase] = result.scalars().unique().all
+        pacientes: List[PacienteSchemaBase] = result.scalars().unique().all()
 
         return pacientes
 
@@ -51,11 +57,11 @@ async def get_paciente(paciente_id: int, db: AsyncSession = Depends(get_session)
     async with db as session:
         query = select(PacienteModel).filter(PacienteModel.id==paciente_id)
         result = await session.execute(query)
-        paciente: PacienteSchemaBase = result.scalars().unique().one_or_none
+        paciente: PacienteSchemaBase = result.scalars().unique().one_or_none()
         if paciente:
             return paciente
         else:
-            raise HTTPException(detail='Usuário não encontrado.', status_code=status.HTTP_404_NOT_FOUND)
+            raise HTTPException(detail='Paciente não encontrado.', status_code=status.HTTP_404_NOT_FOUND)
 
 
 # PUT Paciente
@@ -64,7 +70,7 @@ async def put_paciente(paciente_id: int, paciente: PacienteSchemaUpdate, db: Asy
     async with db as session:
         query = select(PacienteModel).filter(PacienteModel.id==paciente_id)
         result = await session.execute(query)
-        paciente_update: PacienteSchemaBase = result.scalars().unique().one_or_none
+        paciente_update: PacienteSchemaBase = result.scalars().unique().one_or_none()
         if paciente_update:
             if paciente.nome:
                 paciente_update.nome = paciente.nome
@@ -94,7 +100,7 @@ async def delete_paciente(paciente_id: int, db: AsyncSession = Depends(get_sessi
     async with db as session:
         query = select(PacienteModel).filter(PacienteModel.id==paciente_id)
         result = await session.execute(query)
-        paciente_delete: PacienteSchemaBase = result.scalars().unique().one_or_none
+        paciente_delete: PacienteSchemaBase = result.scalars().unique().one_or_none()
         if paciente_delete:
             await session.delete(paciente_delete)
             await session.commit()
@@ -107,7 +113,7 @@ async def delete_paciente(paciente_id: int, db: AsyncSession = Depends(get_sessi
 
 
 # POST Login
-@router.post('/loginm')
+@router.post('/login')
 async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: AsyncSession = Depends(get_session)):
     paciente = await autenticar(email=form_data.username, senha=form_data.password, db=db)
 

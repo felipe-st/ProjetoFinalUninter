@@ -11,7 +11,7 @@ class PacienteSchemaBase(BaseModel):
     cpf: str
     idade: str
     sexo: str
-    email: str
+    email: EmailStr
 
     class Config:
         orm_mode = True

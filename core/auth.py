@@ -25,9 +25,9 @@ oauth2_schema = OAuth2PasswordBearer(
 
 async def autenticar(email: EmailStr, senha: str, db: AsyncSession) -> Optional[PacienteModel]:
     async with db as session:
-        query = select(PacienteModel).filter(PacienteModel.emsil == email)
+        query = select(PacienteModel).filter(PacienteModel.email == email)
         result = await session.execute(query)
-        paciente: PacienteModel = result.scalar().unique().one_or_none()
+        paciente: PacienteModel = result.scalars().unique().one_or_none()
 
         if not paciente:
             return None
@@ -40,7 +40,7 @@ async def autenticar(email: EmailStr, senha: str, db: AsyncSession) -> Optional[
 
 def _criar_token(tipo_token: str, tempo_vida: timedelta, sub: str) -> str:
     payload = {}
-    sp = timezone('America/Sao Paulo')
+    sp = timezone('America/Sao_Paulo')
     expira = datetime.now (tz=sp) + tempo_vida
 
     payload["type"] = tipo_token
