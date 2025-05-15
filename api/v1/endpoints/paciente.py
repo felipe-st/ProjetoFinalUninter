@@ -24,7 +24,7 @@ def get_logado(paciente_logado: PacienteModel = Depends(get_current_user)):
 # POST / Signup
 @router.post('/signup', status_code=status.HTTP_201_CREATED, response_model=PacienteSchemaBase)
 async def post_paciente(paciente: PacienteSchemaCreate, db: AsyncSession = Depends(get_session)):
-    novo_paciente: PacienteModel = PacienteModel(nome=paciente.nome, telefone=paciente.telefone, cpf=paciente.telefone,
+    novo_paciente: PacienteModel = PacienteModel(nome=paciente.nome, telefone=paciente.telefone, cpf=paciente.cpf,
                                                  idade=paciente.idade, sexo=paciente.sexo, email=paciente.email,
                                                  senha=gerar_hash_senha(paciente.senha))
     async with db as session:

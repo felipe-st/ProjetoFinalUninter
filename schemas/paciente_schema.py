@@ -18,14 +18,17 @@ class PacienteSchemaBase(BaseModel):
 
 
 class PacienteSchemaCreate(PacienteSchemaBase):
-    senha = str
+    senha : str
 
 
 class PacienteSchemaUpdate(PacienteSchemaBase):
-    nome: Optional[str]
-    telefone = Optional[str]
-    cpf = Optional[str]
-    idade = Optional[str]
-    sexo = Optional[str]
-    email = Optional[EmailStr]
-    senha = Optional[str]
+    nome : Optional[str]
+    telefone : Optional[str]
+    cpf : Optional[str]
+    idade : Optional[str]
+    sexo : Optional[str]
+    email : Optional[EmailStr]
+    senha : Optional[str]
+
+    class Config:
+        arbitrary_types_allowed = True
