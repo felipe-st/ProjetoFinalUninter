@@ -1,9 +1,11 @@
 Projeto Final Uninter
 Projeto básico do backend de sistema ded gestão hospitalar
+___________________________________________________________________________________________________________________________________________________________________________________________________________________
 
 Tecnologias utlizadas:
 Python (FastApi, SQLAlchemy);
 PostgreSQL
+___________________________________________________________________________________________________________________________________________________________________________________________________________________
 Como utilizar:
 Criar o ambiente e instalar as dependências do projeto, que encontram-se em requirements.txt;
 No arquivo core.configs, preencha DB_URL com os dados do seu banco de dados, seguindo o exemplo e de acordo com a documentação do SQLAlchemy: str = "'postgresql+asyncpg://postgres:suasenha@localhost:5432/uninter'";
