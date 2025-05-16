@@ -1,5 +1,5 @@
 Projeto Final Uninter
-Projeto básico do backend de sistema ded gestão hospitalar
+Projeto básico do backend de sistema de gestão hospitalar
 ___________________________________________________________________________________________________________________________________________________________________________________________________________________
 
 Tecnologias utlizadas:
